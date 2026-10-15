@@ -148,19 +148,21 @@ export const DICT = {
   }
 };
 
-let current = 'uk';
+const LANG_KEY = 'pcr.lang.v2';
+let current = 'en';
 
-export function setLang(code) {
+/** `remember` is true only when the visitor picked a language themselves. */
+export function setLang(code, remember) {
   if (DICT[code]) current = code;
-  try { localStorage.setItem('pcr.lang', current); } catch (e) {}
+  if (remember) { try { localStorage.setItem(LANG_KEY, current); } catch (e) {} }
   document.documentElement.lang = current;
 }
 
-/** Ukrainian is the default; the switcher remembers anything the visitor picks. */
+/** English is the default; only a language the visitor picked is restored. */
 export function initLang() {
   let code = null;
-  try { code = localStorage.getItem('pcr.lang'); } catch (e) {}
-  setLang(DICT[code] ? code : 'uk');
+  try { code = localStorage.getItem(LANG_KEY); } catch (e) {}
+  setLang(DICT[code] ? code : 'en');
   return current;
 }
 

@@ -28,6 +28,7 @@ const el = {
   collars: document.getElementById('collarSwatches'),
   start: document.getElementById('startBtn'),
   langCtl: document.getElementById('langCtl'),
+  langSetup: document.getElementById('langSetup'),
   status: document.getElementById('status'),
   brand: document.getElementById('brandName')
 };
@@ -48,19 +49,23 @@ export function applyI18n() {
   if (el.brand) el.brand.textContent = draft.name || t('setup.namePlaceholder');
 }
 
+/** The same switcher on both screens — the setup card and the room's topbar. */
 function renderLang() {
-  el.langCtl.innerHTML = '';
-  Object.keys(DICT).forEach(code => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = DICT[code].label;
-    b.setAttribute('aria-pressed', String(code === lang()));
-    b.addEventListener('click', () => {
-      setLang(code);
-      applyI18n();
-      onLangChange();
+  [el.langCtl, el.langSetup].forEach(host => {
+    if (!host) return;
+    host.innerHTML = '';
+    Object.keys(DICT).forEach(code => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = DICT[code].label;
+      b.setAttribute('aria-pressed', String(code === lang()));
+      b.addEventListener('click', () => {
+        setLang(code, true);          // an explicit pick is the one worth remembering
+        applyI18n();
+        onLangChange();
+      });
+      host.appendChild(b);
     });
-    el.langCtl.appendChild(b);
   });
 }
 

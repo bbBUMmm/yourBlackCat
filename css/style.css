@@ -46,6 +46,8 @@ button{font:inherit;color:inherit}
   padding:34px 32px 30px;
   box-shadow:var(--shadow-m);
 }
+.setup-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.setup-head .lang{background:#FAF5EC}
 .eyebrow{
   margin:0;
   font-size:11px;letter-spacing:.2em;text-transform:uppercase;
