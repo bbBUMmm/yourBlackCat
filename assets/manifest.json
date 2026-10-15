@@ -1,0 +1,14 @@
+{
+  "models": {
+    "room": "",
+    "cat": ""
+  },
+  "posters": {},
+  "sounds": {
+    "sneeze": ["sneeze_1.mp3", "sneeze_2.mp3", "sneeze_3.mp3"],
+    "meow": ["meow_1.mp3", "meow_2.mp3", "meow_3.mp3"],
+    "purr": "purr.mp3",
+    "munch": "munch.mp3",
+    "land": "land.mp3"
+  }
+}
