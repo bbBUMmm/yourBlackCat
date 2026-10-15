@@ -125,10 +125,12 @@ export class CatController {
       const dx = this.look.x * 0.707 + this.look.y * 0.37;
       const dz = -this.look.x * 0.707 + this.look.y * 0.37;
       const bodyYaw = this.rig.root ? this.rig.root.rotation.y : 0;
-      let d = Math.atan2(dx, dz) - bodyYaw;
-      d = Math.atan2(Math.sin(d), Math.cos(d));            // shortest way round
+      const d = Math.atan2(dx, dz) - bodyYaw;
+      // sin() of that angle, not the angle itself: a clamped angle flips sign the
+      // moment the cursor crosses straight behind the head, which snaps. This is
+      // continuous all the way round — the head eases back through centre instead.
       const reach = Math.min(1, Math.hypot(this.look.x, this.look.y) * 1.8);
-      headYaw = clamp(d, -0.5, 0.5) * reach;               // steady near the centre
+      headYaw = 0.5 * Math.tanh(Math.sin(d) * 1.9) * reach;
       headPitch = this.look.y * 0.22;
     }
     if (napping) headPitch = 0.3;
