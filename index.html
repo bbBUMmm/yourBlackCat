@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23211E1B'/%3E%3Crect x='4' y='6' width='2' height='2' fill='%23E8B94A'/%3E%3Crect x='10' y='6' width='2' height='2' fill='%23E8B94A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Manrope:wght@400;500;600&family=Tiny5&display=swap">
 <link rel="stylesheet" href="css/style.css">
 <script type="importmap">
 {
@@ -66,13 +66,15 @@
         <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.6 9.2a4 4 0 0 1 0 5.6"/></svg>
         <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
       </button>
-      <button id="changeCat" class="link-btn" type="button" data-i18n="ui.changeCat"></button>
+      <button hidden id="changeCat" class="link-btn" type="button" data-i18n="ui.changeCat"></button>
     </div>
   </header>
 
   <div class="stage">
     <div class="frame">
       <canvas id="scene"></canvas>
+      <button id="helpBtn" class="book-btn px-art" type="button" aria-haspopup="dialog"></button>
+      <div id="hearts" class="hearts" role="img"></div>
       <div id="loading" class="loading"><span data-i18n="ui.loading"></span></div>
     </div>
     <p class="sr" id="status" aria-live="polite"></p>
@@ -84,6 +86,10 @@
   </div>
 
 </main>
+
+<!-- ============ PIXEL PAGES (filled by js/hud.js) ============ -->
+<dialog id="helpDlg" class="px-dlg help-dlg" aria-labelledby="helpTitle"><div class="book"></div></dialog>
+<dialog id="foundDlg" class="px-dlg found-dlg" aria-labelledby="foundTitle"><div class="found-card"></div></dialog>
 
 <noscript><p style="padding:24px;font-family:sans-serif">This page needs JavaScript.</p></noscript>
 

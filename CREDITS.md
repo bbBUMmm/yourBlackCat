@@ -12,8 +12,10 @@
 
 - **Literata** — SIL Open Font License 1.1
 - **Manrope** — SIL Open Font License 1.1
+- **Tiny5** — SIL Open Font License 1.1 (піксельний шрифт сторінок книжки і спливного вікна)
 
-Обидва підключені з Google Fonts.
+Усі три підключені з Google Fonts. Піксельні сердечка, книжка та іконки
+намальовані кодом у `js/hud.js`, без файлів зображень.
 
 ## Звуки
 

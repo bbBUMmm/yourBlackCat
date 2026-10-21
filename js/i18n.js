@@ -18,7 +18,22 @@ export const DICT = {
       treat: 'Смаколик',
       changeCat: 'змінити кота',
       loading: 'будуємо кімнату',
-      mute: 'Звук'
+      mute: 'Звук',
+      help: 'Довідка',
+      health: "Здоров'я: {v} з 5 сердечок"
+    },
+    help: {
+      title: 'Догляд за котом',
+      feed: 'Годуй кота смаколиком хоча б раз на день.',
+      smoke: 'Інакше голодний кіт почне курити — і помре від раку легень.',
+      hearts: "Одне сердечко — це 12 годин. Смаколик наповнює всі п'ять.",
+      meow: 'Коли лишається одне сердечко, кіт нявкає набагато частіше.',
+      close: 'Зрозуміло'
+    },
+    found: {
+      title: '{n} знайшов смаколики в іншій кімнаті!',
+      text: 'Сердечка скінчилися, тож {n} сам пішов на пошуки — і знайшов схованку. Сердечка знову повні. Наступного разу не забудь про смаколик.',
+      ok: 'Фух'
     },
     eyes: { amber: 'бурштиновий', green: 'зелений', blue: 'блакитний', gold: 'золотий', hazel: 'горіховий', grey: 'сірий' },
     collars: { none: 'без нашийника', red: 'червоний', cream: 'кремовий', teal: 'бірюзовий', plum: 'сливовий', mustard: 'гірчичний' },
@@ -67,7 +82,22 @@ export const DICT = {
       treat: 'Вкусняшка',
       changeCat: 'изменить кота',
       loading: 'строим комнату',
-      mute: 'Звук'
+      mute: 'Звук',
+      help: 'Справка',
+      health: 'Здоровье: {v} из 5 сердечек'
+    },
+    help: {
+      title: 'Уход за котом',
+      feed: 'Корми кота вкусняшкой хотя бы раз в день.',
+      smoke: 'Иначе голодный кот начнёт курить — и умрёт от рака лёгких.',
+      hearts: 'Одно сердечко — это 12 часов. Вкусняшка наполняет все пять.',
+      meow: 'Когда остаётся одно сердечко, кот мяукает гораздо чаще.',
+      close: 'Понятно'
+    },
+    found: {
+      title: '{n} нашёл вкусняшки в другой комнате!',
+      text: 'Сердечки закончились, и {n} сам отправился на поиски — и нашёл заначку. Сердечки снова полные. В следующий раз не забудь про вкусняшку.',
+      ok: 'Фух'
     },
     eyes: { amber: 'янтарный', green: 'зелёный', blue: 'голубой', gold: 'золотой', hazel: 'ореховый', grey: 'серый' },
     collars: { none: 'без ошейника', red: 'красный', cream: 'кремовый', teal: 'бирюзовый', plum: 'сливовый', mustard: 'горчичный' },
@@ -116,7 +146,22 @@ export const DICT = {
       treat: 'Treat',
       changeCat: 'change cat',
       loading: 'building the room',
-      mute: 'Sound'
+      mute: 'Sound',
+      help: 'Help',
+      health: 'Health: {v} of 5 hearts'
+    },
+    help: {
+      title: 'Cat care',
+      feed: 'Feed {n} a treat at least once a day.',
+      smoke: 'Otherwise a hungry cat starts smoking — and dies of lung cancer.',
+      hearts: 'One heart lasts 12 hours. A treat refills all five.',
+      meow: 'On the last heart, {n} meows a lot more often.',
+      close: 'Got it'
+    },
+    found: {
+      title: '{n} found treats in the other room!',
+      text: 'The hearts ran out, so {n} went looking and found a hidden stash. All hearts are back. Next time, bring a treat yourself.',
+      ok: 'Phew'
     },
     eyes: { amber: 'amber', green: 'green', blue: 'blue', gold: 'gold', hazel: 'hazel', grey: 'grey' },
     collars: { none: 'no collar', red: 'red', cream: 'cream', teal: 'teal', plum: 'plum', mustard: 'mustard' },

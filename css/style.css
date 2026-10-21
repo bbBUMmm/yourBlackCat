@@ -13,6 +13,15 @@
   --shadow-m:0 18px 44px rgba(42,34,24,.13);
   --serif:"Literata",Georgia,"Times New Roman",serif;
   --sans:"Manrope","Helvetica Neue",Arial,system-ui,sans-serif;
+  /* pixel layer: hearts, the help book, its pages */
+  --pixel:"Tiny5","Courier New",monospace;
+  --px:3px;                 /* one art pixel; hud.js snaps it to whole device pixels */
+  --px-ink:#2B1A12;
+  --parchment:#F6EBD3;
+  --parchment-shade:#E9DABA;
+  --parchment-fold:#D6C29B;
+  --leather:#8E3F2B;
+  --leather-ink:#6A2C1D;
   color-scheme:light;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -173,6 +182,122 @@ button:focus-visible,input:focus-visible,.sw:focus-visible{
   outline:2px solid var(--accent);outline-offset:2px;
 }
 
+/* ---------------- pixel layer ---------------- */
+/* every piece of art is an SVG of 1×1 rects; --w/--h are its size in art pixels */
+.px-art svg{display:block;width:calc(var(--w) * var(--px) * var(--k,1));height:calc(var(--h) * var(--px) * var(--k,1))}
+
+.hearts{
+  position:absolute;top:18px;right:20px;
+  display:flex;gap:var(--px);
+  filter:drop-shadow(0 var(--px) 0 rgba(42,34,24,.16));
+}
+.heart{display:block;transform-origin:50% 55%}
+.heart.pop{animation:heart-pop .3s ease-out}
+.heart.beat{animation:heart-beat 1.15s ease-in-out infinite}
+@keyframes heart-pop{0%{transform:scale(1)}45%{transform:scale(1.32)}100%{transform:scale(1)}}
+@keyframes heart-beat{0%,34%,100%{transform:scale(1)}12%{transform:scale(1.2)}22%{transform:scale(1.04)}}
+
+.book-btn{
+  position:absolute;top:14px;left:16px;
+  border:0;background:none;padding:var(--px);cursor:pointer;
+  filter:drop-shadow(0 var(--px) 0 rgba(42,34,24,.18));
+}
+.book-btn:hover svg{transform:translateY(calc(var(--px) * -1))}
+.book-btn:active svg{transform:none}
+
+.px-dlg{
+  border:0;padding:0;margin:auto;background:none;overflow:visible;
+  max-width:none;max-height:none;
+  color:var(--px-ink);font-family:var(--pixel);
+  font-weight:400;font-synthesis:none;    /* Tiny5 has one weight; faked bold smears the pixels */
+}
+.px-dlg::backdrop{background:rgba(40,29,20,.55)}
+.px-dlg h2{margin:0;font-weight:400;line-height:1.1;color:var(--leather-ink)}
+.px-dlg form{margin:0}
+
+/* notched pixel border + a hard drop shadow, shared by the book, the card and the buttons */
+.book,.found-card{
+  box-shadow:
+    0 calc(var(--px) * -1) 0 var(--px-ink), 0 var(--px) 0 var(--px-ink),
+    calc(var(--px) * -1) 0 0 var(--px-ink), var(--px) 0 0 var(--px-ink),
+    0 calc(var(--px) * 4) 0 rgba(20,12,6,.3);
+  animation:px-in .24s ease-out both;
+}
+@keyframes px-in{from{transform:translateY(calc(var(--px) * 6));opacity:0}to{transform:none;opacity:1}}
+
+/* the help page: an open book, leather showing round two parchment pages */
+.book{
+  display:grid;grid-template-columns:1fr 1fr;gap:var(--px);
+  width:min(720px,calc(100vw - 48px));
+  padding:calc(var(--px) * 3);
+  background:var(--leather);
+}
+.page{
+  position:relative;
+  display:flex;flex-direction:column;gap:20px;
+  padding:30px 30px 26px;
+  background:var(--parchment);
+}
+.page:first-child{box-shadow:inset calc(var(--px) * -1) 0 0 var(--parchment-fold),inset calc(var(--px) * -4) 0 0 var(--parchment-shade)}
+.page:last-child{box-shadow:inset var(--px) 0 0 var(--parchment-fold),inset calc(var(--px) * 4) 0 0 var(--parchment-shade)}
+.page:last-child::before{                 /* the bookmark ribbon from the cover icon */
+  content:"";position:absolute;top:calc(var(--px) * -3);right:34px;
+  width:calc(var(--px) * 3);height:calc(var(--px) * 15);
+  background:#3F8A74;
+  clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - var(--px) * 2),0 100%);
+}
+.page h2{font-size:24px}             /* Tiny5 is drawn on an 8-unit em: 16 / 24 px land on whole pixels */
+.rule{
+  margin:0;display:grid;grid-template-columns:calc(var(--px) * 16) 1fr;gap:14px;align-items:center;
+  font-size:16px;line-height:1.5;
+}
+.rule .px-art{justify-self:center}
+.rule.warn{color:#9C2A1C}
+.page form{margin-top:auto;display:flex;justify-content:flex-end}
+
+/* hearts ran out: the whole screen, not just a card */
+.found-dlg{
+  position:fixed;inset:0;width:100%;height:100%;margin:0;
+  background:
+    radial-gradient(circle, rgba(255,240,215,.05) 1px, transparent 1.5px) 0 0 / 12px 12px,
+    rgba(34,24,17,.9);
+}
+.found-dlg[open]{display:grid;place-items:center}
+.found-dlg::backdrop{background:transparent}
+.found-card{
+  width:min(540px,calc(100vw - 48px));
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+  padding:34px 34px 30px;text-align:center;
+  background:var(--parchment);
+}
+.found-art{display:flex;align-items:flex-end;gap:calc(var(--px) * 4)}
+.found-art > svg:last-child{transform:scaleX(-1)}
+.found-art .big{--k:2}
+.found-card h2{font-size:24px;max-width:22ch;line-height:1.25}
+.found-card p{margin:0;font-size:16px;line-height:1.55;color:#4A3A2E;max-width:40ch}
+.found-hearts{display:flex;gap:var(--px)}
+
+.px-btn{
+  margin:var(--px);border:0;cursor:pointer;
+  padding:10px 24px 11px;
+  font-family:var(--pixel);font-weight:400;font-size:16px;color:var(--px-ink);
+  background:#F2C14E;
+  box-shadow:
+    inset calc(var(--px) * -1) calc(var(--px) * -1) 0 #C48F2C, inset var(--px) var(--px) 0 #FBE08F,
+    0 calc(var(--px) * -1) 0 var(--px-ink), 0 var(--px) 0 var(--px-ink),
+    calc(var(--px) * -1) 0 0 var(--px-ink), var(--px) 0 0 var(--px-ink);
+}
+.px-btn:hover{background:#F7CD5F}
+.px-btn:active{
+  transform:translateY(1px);
+  box-shadow:
+    inset var(--px) var(--px) 0 #C48F2C,
+    0 calc(var(--px) * -1) 0 var(--px-ink), 0 var(--px) 0 var(--px-ink),
+    calc(var(--px) * -1) 0 0 var(--px-ink), var(--px) 0 0 var(--px-ink);
+}
+.px-btn:focus-visible{outline:2px solid var(--px-ink);outline-offset:calc(var(--px) * 2)}
+
 @media (prefers-reduced-motion: reduce){
   *{transition-duration:.01ms!important}
+  .heart.pop,.heart.beat,.book,.found-card{animation:none}
 }

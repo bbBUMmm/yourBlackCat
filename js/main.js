@@ -7,6 +7,8 @@ import { buildCat, adoptGLB } from './cat.js';
 import { CatController } from './catController.js';
 import { Behavior } from './behavior.js';
 import { Audio } from './audio.js';
+import { Health } from './health.js';
+import { Hud } from './hud.js';
 import { initUI, openSetup, openApp, profile, setStatus, applyI18n, currentProfile, useProfile } from './ui.js';
 
 const canvas = document.getElementById('scene');
@@ -15,6 +17,8 @@ const loadingEl = document.getElementById('loading');
 
 let renderer, scene, camera, room, rig, ctrl, behavior;
 let audio = new Audio(null);
+const health = new Health();
+let hud = null;
 const clock = new THREE.Clock();
 const pointer = { x: 0, y: 0 };
 let started = false;
@@ -148,10 +152,12 @@ async function start(p) {
   rig.root.traverse(o => { if (o.isMesh || o.isInstancedMesh) { o.castShadow = true; o.receiveShadow = true; } });
   scene.add(rig.root);
 
+  health.begin();                             // a brand-new cat starts on 2.5 hearts
   ctrl = new CatController(rig);
   behavior = new Behavior({
     room, rig, ctrl, audio, scene,
     onStatus: key => setStatus(key),
+    onFed: () => health.refill(),             // the moment it starts munching
     onTreatDone: () => { treatBtn.disabled = false; }
   });
 
@@ -163,8 +169,10 @@ function tick() {
   const dt = Math.min(0.05, clock.getDelta());
   if (ctrl) {
     ctrl.lookAtScreen(pointer.x, pointer.y);
+    behavior.setHungry(health.value() <= 1);
     behavior.update(dt);
     ctrl.update(dt);
+    hud.update(dt);
   }
   renderer.render(scene, camera);
 }
@@ -193,14 +201,15 @@ muteBtn.addEventListener('click', () => {
   muteBtn.setAttribute('aria-pressed', String(next));
   if (!next) audio.unlock();
 });
-document.getElementById('changeCat').addEventListener('click', () => openSetup(currentProfile()));
+// document.getElementById('changeCat').addEventListener('click', () => openSetup(currentProfile()));
 window.addEventListener('pointerdown', () => audio.unlock());
 
 /* ---------------- boot ---------------- */
 initLang();
+hud = new Hud({ health, profile: () => currentProfile() });
 initUI({
   onStart: p => start(p),
-  onLangChange: () => {}
+  onLangChange: () => hud.applyLang()
 });
 
 const saved = profile.load();

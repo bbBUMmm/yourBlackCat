@@ -30,6 +30,7 @@ export class Behavior {
     this.scene = opts.scene;
     this.onStatus = opts.onStatus || (() => {});
     this.onTreatDone = opts.onTreatDone || (() => {});
+    this.onFed = opts.onFed || (() => {});
 
     this.pos = { x: this.room.deskHome.x * VOX, z: this.room.deskHome.z * VOX };
     this.y = ROOM.DESK_TOP;
@@ -43,6 +44,7 @@ export class Behavior {
     this.sneezeTimer = 60;
     this.pendingSneeze = false;
     this.meowTimer = rand(15, 20);
+    this.hungry = false;
     this.purring = false;
 
     this.treatMesh = null;
@@ -68,7 +70,7 @@ export class Behavior {
     seq.push(this.aFaceCamera());
     seq.push(this.aClip('wave', 1.6, 'treatWave', 'sit'));
     seq.push(this.aFn(() => this.spawnTreat()));
-    seq.push(this.aClip('eat', 2.2, 'treatEat', 'sit', () => this.audio.play('munch')));
+    seq.push(this.aClip('eat', 2.2, 'treatEat', 'sit', () => { this.audio.play('munch'); this.onFed(); }));
     seq.push(this.aFn(() => this.despawnTreat()));
     seq.push(this.aPurr(3.2, 'treatPurr', 'loaf'));
     seq.push(this.aWalkTo(this.room.deskExit, 'back'));
@@ -86,6 +88,14 @@ export class Behavior {
     return !this.action || this.action.interruptible !== false;
   }
 
+  /** Down to the last heart, the cat asks far more often. main.js sets this every frame. */
+  setHungry(on) {
+    if (on === this.hungry) return;
+    this.hungry = on;
+    if (on && !this.treatRunning) this.meowTimer = Math.min(this.meowTimer, this.meowGap());
+  }
+  meowGap() { return this.hungry ? rand(5, 8) : rand(15, 20); }
+
   /* ---------------- loop ---------------- */
   update(dt) {
     if (this.delayed) {
@@ -101,7 +111,8 @@ export class Behavior {
       this.doSneeze();
     }
 
-    // a meow every 15–20 s — a nap or a purr gets cut short for it, a treat does not
+    // a meow every 15–20 s (5–8 s on the last heart) — a nap or a purr gets cut
+    // short for it, a treat does not
     this.meowTimer -= dt;
     if (this.meowTimer <= 0) {
       const shortClipRunning = this.ctrl.busyClip && !this.purring;
@@ -110,7 +121,7 @@ export class Behavior {
       else {
         if (this.ctrl.mode === 'nap') this.breakIdle();   // stirs awake, then calls out
         this.doMeow();                                    // a purr just carries on underneath
-        this.meowTimer = rand(15, 20);
+        this.meowTimer = this.meowGap();
       }
     }
 
