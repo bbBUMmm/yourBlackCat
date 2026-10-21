@@ -152,10 +152,15 @@ const BUBBLE_ART = pixelArt(BUBBLE, BUBBLE_PAL);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rule = (art, text, cls = '') => `<p class="rule ${cls}"><span class="px-art">${art}</span><span>${text}</span></p>`;
 
-/** One art pixel ≈ 3 CSS px, nudged onto whole device pixels so the art stays crisp at 125 % / 150 %. */
+/**
+ * One art pixel ≈ 3 CSS px (2 on a phone — same breakpoints as style.css),
+ * nudged onto whole device pixels so the art stays crisp at 125 % / 150 % / 2.6×.
+ */
+const SMALL_SCREEN = window.matchMedia('(max-width: 640px), (max-height: 520px)');
 function fitPixel() {
   const dpr = window.devicePixelRatio || 1;
-  document.documentElement.style.setProperty('--px', (Math.max(1, Math.round(3 * dpr)) / dpr) + 'px');
+  const base = SMALL_SCREEN.matches ? 2 : 3;
+  document.documentElement.style.setProperty('--px', (Math.max(1, Math.round(base * dpr)) / dpr) + 'px');
 }
 
 /* ---------------- the HUD ---------------- */

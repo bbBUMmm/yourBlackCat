@@ -26,6 +26,7 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 html,body{height:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 body{
   margin:0;
   background:
@@ -37,7 +38,7 @@ body{
   line-height:1.5;
   -webkit-font-smoothing:antialiased;
 }
-button{font:inherit;color:inherit}
+button{font:inherit;color:inherit;touch-action:manipulation}
 [hidden]{display:none!important}
 
 /* ---------------- setup ---------------- */
@@ -114,9 +115,15 @@ input[type="text"]:focus{outline:2px solid var(--accent);outline-offset:1px;bord
   display:flex;flex-direction:column;align-items:center;
   gap:18px;
   padding:22px max(20px,env(safe-area-inset-left,0px)) 34px;
+  /* the room's width, shared by the topbar and the frame; a short window
+     shrinks it so the room and both buttons still fit on one screen */
+  --room-w:min(980px,100%,max(320px,calc((100vh - 190px) * 16 / 11)));
+}
+@supports (height:100dvh){
+  .app{--room-w:min(980px,100%,max(320px,calc((100dvh - 190px) * 16 / 11)))}
 }
 .topbar{
-  width:min(980px,100%);
+  width:var(--room-w);
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
 }
 .brand{display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:16px;font-weight:600}
@@ -145,10 +152,11 @@ input[type="text"]:focus{outline:2px solid var(--accent);outline-offset:1px;bord
 }
 .link-btn:hover{color:var(--ink)}
 
-.stage{width:min(980px,100%);display:flex;flex-direction:column;align-items:center;gap:14px}
+.stage{width:var(--room-w);display:flex;flex-direction:column;align-items:center;gap:14px}
 .frame{
   position:relative;width:100%;aspect-ratio:16/11;
   border-radius:22px;overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
   background:linear-gradient(170deg,#FFFDF9 0%,#F0E9DE 100%);
   border:1px solid var(--line);
   box-shadow:var(--shadow-m);
@@ -172,10 +180,12 @@ input[type="text"]:focus{outline:2px solid var(--accent);outline-offset:1px;bord
   box-shadow:var(--shadow-s);
   transition:transform .12s ease,border-color .18s ease,background .18s ease;
 }
-.action-btn:hover{border-color:var(--ink)}
 .action-btn:active{transform:translateY(1px)}
 .action-btn.primary{background:var(--ink);border-color:var(--ink);color:#FDFBF7}
-.action-btn.primary:hover{background:#000}
+@media (hover:hover){                     /* a tap must not leave a hover state stuck on */
+  .action-btn:hover{border-color:var(--ink)}
+  .action-btn.primary:hover{background:#000}
+}
 .action-btn[disabled]{opacity:.45;cursor:default;transform:none}
 
 button:focus-visible,input:focus-visible,.sw:focus-visible{
@@ -202,7 +212,9 @@ button:focus-visible,input:focus-visible,.sw:focus-visible{
   border:0;background:none;padding:var(--px);cursor:pointer;
   filter:drop-shadow(0 var(--px) 0 rgba(42,34,24,.18));
 }
-.book-btn:hover svg{transform:translateY(calc(var(--px) * -1))}
+@media (hover:hover){
+  .book-btn:hover svg{transform:translateY(calc(var(--px) * -1))}
+}
 .book-btn:active svg{transform:none}
 
 .px-dlg{
@@ -227,21 +239,22 @@ button:focus-visible,input:focus-visible,.sw:focus-visible{
 
 /* the help page: an open book, leather showing round two parchment pages */
 .book{
+  position:relative;
   display:grid;grid-template-columns:1fr 1fr;gap:var(--px);
   width:min(720px,calc(100vw - 48px));
+  max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow-y:auto;
   padding:calc(var(--px) * 3);
   background:var(--leather);
 }
 .page{
-  position:relative;
   display:flex;flex-direction:column;gap:20px;
   padding:30px 30px 26px;
   background:var(--parchment);
 }
 .page:first-child{box-shadow:inset calc(var(--px) * -1) 0 0 var(--parchment-fold),inset calc(var(--px) * -4) 0 0 var(--parchment-shade)}
 .page:last-child{box-shadow:inset var(--px) 0 0 var(--parchment-fold),inset calc(var(--px) * 4) 0 0 var(--parchment-shade)}
-.page:last-child::before{                 /* the bookmark ribbon from the cover icon */
-  content:"";position:absolute;top:calc(var(--px) * -3);right:34px;
+.book::before{                            /* the bookmark ribbon from the cover icon */
+  content:"";position:absolute;z-index:1;top:0;right:calc(var(--px) * 3 + 34px);
   width:calc(var(--px) * 3);height:calc(var(--px) * 15);
   background:#3F8A74;
   clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - var(--px) * 2),0 100%);
@@ -262,7 +275,7 @@ button:focus-visible,input:focus-visible,.sw:focus-visible{
     radial-gradient(circle, rgba(255,240,215,.05) 1px, transparent 1.5px) 0 0 / 12px 12px,
     rgba(34,24,17,.9);
 }
-.found-dlg[open]{display:grid;place-items:center}
+.found-dlg[open]{display:grid;place-items:center;place-items:safe center;overflow-y:auto;padding:20px 0}
 .found-dlg::backdrop{background:transparent}
 .found-card{
   width:min(540px,calc(100vw - 48px));
@@ -296,6 +309,71 @@ button:focus-visible,input:focus-visible,.sw:focus-visible{
     calc(var(--px) * -1) 0 0 var(--px-ink), var(--px) 0 0 var(--px-ink);
 }
 .px-btn:focus-visible{outline:2px solid var(--px-ink);outline-offset:calc(var(--px) * 2)}
+
+/* ---------------- phones ---------------- */
+/* hud.js uses the same two breakpoints to drop the art pixel from 3 to 2 CSS px */
+@media (max-width:640px){
+  .setup{padding:16px max(16px,env(safe-area-inset-left,0px))}
+  .setup-card{padding:26px 20px 22px;border-radius:18px}
+  .field{margin-top:22px}
+  input[type="text"]{font-size:16px}       /* anything smaller and iOS zooms in on focus */
+  .swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .sw{width:auto;height:auto;aspect-ratio:1;max-width:52px}
+  .primary-btn{margin-top:26px;padding:16px 20px}
+
+  /* the help book closes up into a single page */
+  .book{grid-template-columns:1fr;width:calc(100vw - 28px)}
+  .page{padding:22px 20px 20px;gap:16px}
+  .page:first-child{box-shadow:inset 0 calc(var(--px) * -1) 0 var(--parchment-fold),inset 0 calc(var(--px) * -4) 0 var(--parchment-shade)}
+  .page:last-child{box-shadow:inset 0 var(--px) 0 var(--parchment-fold),inset 0 calc(var(--px) * 4) 0 var(--parchment-shade)}
+  .book::before{right:calc(var(--px) * 3 + 22px)}
+  .rule{gap:12px}
+  .found-card{width:calc(100vw - 28px);padding:26px 20px 24px;gap:16px}
+}
+
+/* portrait phone: name and switches on top, then the room and two big buttons, centred */
+@media (max-width:640px) and (orientation:portrait){
+  .app{
+    gap:14px;
+    padding:max(12px,env(safe-area-inset-top,0px)) 16px max(18px,env(safe-area-inset-bottom,0px));
+    --room-w:min(100%,max(260px,calc((100vh - 160px) * 6 / 7)));
+  }
+  @supports (height:100dvh){
+    .app{--room-w:min(100%,max(260px,calc((100dvh - 160px) * 6 / 7)))}
+  }
+  .topbar{flex-wrap:nowrap;gap:10px}
+  .brand{min-width:0;font-size:17px}
+  #brandName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tools{flex:none;gap:8px}
+  .lang button{padding:7px 9px}
+  .topbar{margin-top:auto}                 /* name bar, room and buttons sit together, centred */
+  .frame{aspect-ratio:6/7;border-radius:18px}
+  .controls{width:var(--room-w);flex-wrap:nowrap;gap:10px;margin-bottom:auto}
+  .action-btn{flex:1 1 0;padding:16px 10px;font-size:16px;border-radius:14px}
+  .hearts{top:12px;right:12px}
+  .book-btn{top:9px;left:9px}
+}
+
+/* landscape phone: the room as tall as the screen, everything else in a column beside it */
+@media (orientation:landscape) and (max-height:520px){
+  .app{
+    display:grid;grid-template-columns:auto minmax(150px,210px);grid-template-rows:auto 1fr;
+    align-content:center;justify-content:center;column-gap:20px;row-gap:16px;
+    padding:max(12px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px))
+            max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  }
+  .topbar{grid-column:2;grid-row:1;width:auto;flex-direction:column;align-items:flex-start;gap:12px}
+  .stage{grid-column:1;grid-row:1 / span 2;width:auto}
+  .frame{
+    width:auto;height:calc(100vh - 24px);height:calc(100dvh - 24px);
+    max-width:calc(100vw - 32px - 20px - 150px);
+    border-radius:18px;
+  }
+  .controls{grid-column:2;grid-row:2;align-self:end;flex-direction:column;flex-wrap:nowrap}
+  .action-btn{padding:14px 16px}
+  .hearts{top:10px;right:12px}
+  .book-btn{top:8px;left:9px}
+}
 
 @media (prefers-reduced-motion: reduce){
   *{transition-duration:.01ms!important}

@@ -97,11 +97,15 @@ function resize() {
   if (!w || !h) return;
   renderer.setSize(w, h, false);
   const aspect = w / h;
-  const viewSize = 28.5;
+  // A wide (desktop) frame shows 28.5 units top to bottom. The room is ~25.5
+  // units across, so a narrow phone frame widens the view until it fits, and
+  // slides the room down a touch so the hearts get a strip of empty wall-top.
+  const viewSize = Math.max(28.5, 26.6 / aspect);
+  const lift = (viewSize - 28.5) * 0.3;
   camera.left = -viewSize * aspect / 2;
   camera.right = viewSize * aspect / 2;
-  camera.top = viewSize / 2;
-  camera.bottom = -viewSize / 2;
+  camera.top = viewSize / 2 + lift;
+  camera.bottom = -viewSize / 2 + lift;
   camera.updateProjectionMatrix();
 }
 
@@ -178,12 +182,14 @@ function tick() {
 }
 
 /* ---------------- input ---------------- */
-window.addEventListener('resize', () => { if (renderer) resize(); });
-window.addEventListener('pointermove', e => {
+// the frame, not the window: a phone's toolbar or a rotation resizes it too
+new ResizeObserver(() => { if (renderer) resize(); }).observe(frame);
+function aim(e) {
   const r = frame.getBoundingClientRect();
   pointer.x = ((e.clientX - r.left) / r.width - 0.5) * 2;
   pointer.y = ((e.clientY - r.top) / r.height - 0.5) * 2;
-});
+}
+window.addEventListener('pointermove', aim);
 
 const sneezeBtn = document.getElementById('sneezeBtn');
 const treatBtn = document.getElementById('treatBtn');
@@ -202,7 +208,8 @@ muteBtn.addEventListener('click', () => {
   if (!next) audio.unlock();
 });
 // document.getElementById('changeCat').addEventListener('click', () => openSetup(currentProfile()));
-window.addEventListener('pointerdown', () => audio.unlock());
+// a phone has no hover, so a tap is where the cat looks
+window.addEventListener('pointerdown', e => { aim(e); audio.unlock(); });
 
 /* ---------------- boot ---------------- */
 initLang();
